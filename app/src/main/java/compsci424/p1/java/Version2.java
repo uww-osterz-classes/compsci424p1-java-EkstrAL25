@@ -1,7 +1,8 @@
 /* COMPSCI 424 Program 1
- * Name:
+ * Name: Alek Ekstrand
  */
 package compsci424.p1.java;
+import java.util.LinkedList;
 
 /** 
  * Implements the process creation hierarchy for Version 2, which does
@@ -15,14 +16,18 @@ package compsci424.p1.java;
  */
 public class Version2 {
     // Declare any class/instance variables that you need here.
+    private Version2PCB[] pcbArray;
 
     /**
      * Default constructor. Use this to allocate (if needed) and
      * initialize the PCB array, create the PCB for process 0, and do
      * any other initialization that is needed. 
      */
-    public Version2() {
-
+    public Version2(int n) {
+        pcbArray = new Version2PCB[n];
+        for (int i = 0; i < n; i++) {
+            pcbArray[i] = new Version2PCB();
+        }
     }
     
     /**
@@ -35,12 +40,32 @@ public class Version2 {
         // your code may return an error code or message in this case,
         // but it should not halt
 
+        int newPid = findFreePid();
+        if (newPid == -1) {
+            System.out.println("No free PCBs available.");
+            return -1;
+        }
+
         // Assuming you've found the PCB for parentPid in the PCB array:
         // 1. Allocate and initialize a free PCB object from the array
         //    of PCB objects
 
         // 2. Connect the new PCB object to its parent, its older
         //    sibling (if any), and its younger sibling (if any)
+
+        pcbArray[newPid].parent = parentPid;
+        if (parentPid >= 0 && parentPid < pcbArray.length) {
+            int currentChild = pcbArray[parentPid].first_child;
+            if (currentChild == -1) {
+                pcbArray[parentPid].first_child = newPid;
+            } else {
+                while (pcbArray[currentChild].younger_sibling != -1) {
+                    currentChild = pcbArray[currentChild].younger_sibling;
+                }
+                pcbArray[currentChild].younger_sibling = newPid;
+                pcbArray[newPid].older_sibling = currentChild;
+            }
+        }
 
         // You can decide what the return value(s), if any, should be.
         // If you change the return type/value(s), update the Javadoc.
@@ -58,6 +83,11 @@ public class Version2 {
         // your code may return an error code or message in this case,
         // but it should not halt
 
+        if (targetPid < 0 || targetPid >= pcbArray.length) {
+            System.out.println("Invalid process ID.");
+            return -1;
+        }
+
         // Assuming you've found the PCB for targetPid in the PCB array:
         // 1. Recursively destroy all descendants of targetPid, if it
         //    has any, and mark their PCBs as "free" in the PCB array 
@@ -68,6 +98,12 @@ public class Version2 {
 
         // 3. Deallocate targetPid's PCB and mark its PCB array entry
         //    as "free"
+
+        LinkedList<Integer> descendants = new LinkedList<>();
+        collectDescendants(targetPid, descendants);
+        for (int pid : descendants) {
+            pcbArray[pid] = null;
+        }
 
         // You can decide what the return value(s), if any, should be.
         // If you change the return type/value(s), update the Javadoc.
@@ -84,10 +120,54 @@ public class Version2 {
     * change the return type of this function to return the text to
     * the main program for printing. It's your choice. 
     */
-   void showProcessInfo() {
-
-   }
+    public void showProcessInfo() {
+        for (int i = 0; i < pcbArray.length; i++) {
+            if (pcbArray[i] != null) {
+                System.out.print("Process " + i + ": parent is " + pcbArray[i].parent);
+                int child = pcbArray[i].first_child;
+                if (child != -1) {
+                    System.out.print(" and children are ");
+                    while (child != -1) {
+                        System.out.print(child + " ");
+                        child = pcbArray[child].younger_sibling;
+                    }
+                } else {
+                    System.out.print(" and has no children");
+                }
+                System.out.println();
+            }
+        }
+    }
 
    /* If you need or want more methods, feel free to add them. */
+   /**
+    * Finds a free process ID in the PCB array.
+    *
+    * @return The index of a free process ID if found, or -1 if no free process ID is available.
+    */
+   private int findFreePid() {
+    for (int i = 0; i < pcbArray.length; i++) {
+        if (pcbArray[i] == null) {
+            return i;
+        }
+    }
+    return -1;
+    }
+
+    /**
+     * Recursively collects the descendants of a given process ID.
+     *
+     * @param pid         The process ID whose descendants are to be collected.
+     * @param descendants The list to store the collected descendant process IDs.
+     */
+    private void collectDescendants(int pid, LinkedList<Integer> descendants) {
+        descendants.add(pid);
+        int child = pcbArray[pid].first_child;
+        while (child != -1) {
+            collectDescendants(child, descendants);
+            child = pcbArray[child].younger_sibling;
+        }
+    }
+
 
 }

@@ -1,5 +1,5 @@
 /* COMPSCI 424 Program 1
- * Name:
+ * Name: Alek Ekstrand
  */
 package compsci424.p1.java;
 
@@ -9,5 +9,15 @@ package compsci424.p1.java;
  * (if they exist) in Version 2.
  */
 public class Version2PCB {
-    
+    int parent;
+    int first_child;
+    int younger_sibling;
+    int older_sibling;
+
+    public Version2PCB() {
+        this.parent = -1;
+        this.first_child = -1;
+        this.younger_sibling = -1;
+        this.older_sibling = -1;
+    }
 }

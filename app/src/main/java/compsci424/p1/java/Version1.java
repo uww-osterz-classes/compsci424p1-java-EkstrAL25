@@ -1,7 +1,8 @@
 /* COMPSCI 424 Program 1
- * Name:
+ * Name: Alek Ekstrand
  */
 package compsci424.p1.java;
+import java.util.LinkedList;
 
 /** 
  * Implements the process creation hierarchy for Version 1, which uses
@@ -15,14 +16,18 @@ package compsci424.p1.java;
  */
 public class Version1 {
     // Declare any class/instance variables that you need here.
+    private Version1PCB[] pcbArray;
 
     /**
      * Default constructor. Use this to allocate (if needed) and
      * initialize the PCB array, create the PCB for process 0, and do
      * any other initialization that is needed. 
      */
-    public Version1() {
-
+    public Version1(int n) {
+        pcbArray = new Version1PCB[n];
+        for (int i = 0; i < n; i++) {
+            pcbArray[i] = new Version1PCB();
+        }
     }
 
     /**
@@ -38,9 +43,17 @@ public class Version1 {
         // Assuming you've found the PCB for parentPid in the PCB array:
         // 1. Allocate and initialize a free PCB object from the array
         //    of PCB objects
+        int newPid = findFreePid();
+        if (newPid == -1) {
+            System.out.println("No free PCBs available.");
+            return -1;
+        }
 
         // 2. Insert the newly allocated PCB object into parentPid's
         //    list of children
+        pcbArray[newPid].parent = parentPid;
+        if (parentPid >= 0 && parentPid < pcbArray.length)
+            pcbArray[parentPid].children.add(newPid);
 
         // You can decide what the return value(s), if any, should be.
         // If you change the return type/value(s), update the Javadoc.
@@ -58,10 +71,21 @@ public class Version1 {
          // your code may return an error code or message in this case,
          // but it should not halt
 
+         if (targetPid < 0 || targetPid >= pcbArray.length) {
+            System.out.println("Invalid process ID.");
+            return -1;
+        }
+
          // Assuming you've found the PCB for targetPid in the PCB array:
          // 1. Recursively destroy all descendants of targetPid, if it
          //    has any, and mark their PCBs as "free" in the PCB array 
          //    (i.e., deallocate them)
+
+         LinkedList<Integer> descendants = new LinkedList<>();
+        collectDescendants(targetPid, descendants);
+        for (int pid : descendants) {
+            pcbArray[pid] = null;
+        }
 
          // 2. Remove targetPid from its parent's list of children
 
@@ -83,10 +107,49 @@ public class Version1 {
      * change the return type of this function to return the text to
      * the main program for printing. It's your choice. 
      */
-    void showProcessInfo() {
-
+    public void showProcessInfo() {
+        for (int i = 0; i < pcbArray.length; i++) {
+            if (pcbArray[i] != null) {
+                System.out.print("Process " + i + ": parent is " + pcbArray[i].parent);
+                if (!pcbArray[i].children.isEmpty()) {
+                    System.out.print(" and children are ");
+                    for (int childPid : pcbArray[i].children) {
+                        System.out.print(childPid + " ");
+                    }
+                } else {
+                    System.out.print(" and has no children");
+                }
+                System.out.println();
+            }
+        }
     }
 
     /* If you need or want more methods, feel free to add them. */
+    /**
+     * Finds a free process ID in the PCB array.
+     *
+     * @return The index of a free process ID if found, or -1 if no free process ID is available.
+     */
+    private int findFreePid() {
+        for (int i = 0; i < pcbArray.length; i++) {
+            if (pcbArray[i] == null) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+    * Recursively collects the descendants of a given process ID.
+    *
+    * @param pid         The process ID whose descendants are to be collected.
+    * @param descendants The list to store the collected descendant process IDs.
+    */
+    private void collectDescendants(int pid, LinkedList<Integer> descendants) {
+        descendants.add(pid);
+        for (int childPid : pcbArray[pid].children) {
+            collectDescendants(childPid, descendants);
+        }
+    }
     
 }
