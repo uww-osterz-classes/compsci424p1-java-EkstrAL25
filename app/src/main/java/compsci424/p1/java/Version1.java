@@ -85,8 +85,7 @@ public class Version1 {
          LinkedList<Integer> descendants = new LinkedList<>();
         collectDescendants(targetPid, descendants);
         for (int pid : descendants) {
-            pcbArray[pid].parent = -1;
-            pcbArray[pid].children = new LinkedList();
+            pcbArray[pid] = null;
         }
 
          // 2. Remove targetPid from its parent's list of children
@@ -150,10 +149,22 @@ public class Version1 {
     * @param descendants The list to store the collected descendant process IDs.
     */
     private void collectDescendants(int pid, LinkedList<Integer> descendants) {
+        if (pcbArray[pid] == null) {
+            // Handle the case where pcbArray[pid] is null
+            return;
+        }
+        
         descendants.add(pid);
+        
+        if (pcbArray[pid].children == null) {
+            // Handle the case where pcbArray[pid].children is null
+            return;
+        }
+        
         for (int childPid : pcbArray[pid].children) {
             collectDescendants(childPid, descendants);
         }
     }
+    
     
 }

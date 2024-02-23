@@ -102,7 +102,7 @@ public class Version2 {
         LinkedList<Integer> descendants = new LinkedList<>();
         collectDescendants(targetPid, descendants);
         for (int pid : descendants) {
-            pcbArray[pid] = new Version2PCB();
+            pcbArray[pid] = null;
         }
 
         // You can decide what the return value(s), if any, should be.
@@ -166,10 +166,13 @@ public class Version2 {
         descendants.add(pid);
         int child = pcbArray[pid].first_child;
         while (child != -1) {
-            collectDescendants(child, descendants);
+            if (pcbArray[child] != null) {
+                collectDescendants(child, descendants);
+            }
             child = pcbArray[child].younger_sibling;
         }
     }
+    
 
 
 }
