@@ -123,18 +123,20 @@ public class Version2 {
     public void showProcessInfo() {
         for (int i = 0; i < pcbArray.length; i++) {
             if (pcbArray[i] != null) {
-                System.out.print("Process " + i + ": parent is " + pcbArray[i].parent);
-                int child = pcbArray[i].first_child;
-                if (child != -1) {
-                    System.out.print(" and children are ");
-                    while (child != -1) {
-                        System.out.print(child + " ");
-                        child = pcbArray[child].younger_sibling;
+                if(pcbArray[i].parent != -1) {
+                    System.out.print("Process " + i + ": parent is " + pcbArray[i].parent);
+                    int child = pcbArray[i].first_child;
+                    if (child != -1) {
+                        System.out.print(" and children are ");
+                        while (child != -1) {
+                            System.out.print(child + " ");
+                            child = pcbArray[child].younger_sibling;
+                        }
+                    } else {
+                        System.out.print(" and has no children");
                     }
-                } else {
-                    System.out.print(" and has no children");
+                    System.out.println();
                 }
-                System.out.println();
             }
         }
     }
