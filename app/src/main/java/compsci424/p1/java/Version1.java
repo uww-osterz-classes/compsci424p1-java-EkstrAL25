@@ -28,6 +28,7 @@ public class Version1 {
         for (int i = 0; i < n; i++) {
             pcbArray[i] = new Version1PCB();
         }
+        // System.out.print(pcbArray.toString());
     }
 
     /**
@@ -84,7 +85,8 @@ public class Version1 {
          LinkedList<Integer> descendants = new LinkedList<>();
         collectDescendants(targetPid, descendants);
         for (int pid : descendants) {
-            pcbArray[pid] = null;
+            pcbArray[pid].parent = -1;
+            pcbArray[pid].children = new LinkedList();
         }
 
          // 2. Remove targetPid from its parent's list of children
@@ -132,7 +134,7 @@ public class Version1 {
      */
     private int findFreePid() {
         for (int i = 0; i < pcbArray.length; i++) {
-            if (pcbArray[i] == null) {
+            if (pcbArray[i].parent == -1) {
                 return i;
             }
         }

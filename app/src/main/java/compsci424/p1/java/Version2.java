@@ -102,7 +102,7 @@ public class Version2 {
         LinkedList<Integer> descendants = new LinkedList<>();
         collectDescendants(targetPid, descendants);
         for (int pid : descendants) {
-            pcbArray[pid] = null;
+            pcbArray[pid] = new Version2PCB();
         }
 
         // You can decide what the return value(s), if any, should be.
@@ -147,7 +147,7 @@ public class Version2 {
     */
    private int findFreePid() {
     for (int i = 0; i < pcbArray.length; i++) {
-        if (pcbArray[i] == null) {
+        if (pcbArray[i].parent == -1) {
             return i;
         }
     }

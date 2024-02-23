@@ -102,14 +102,17 @@ public class Program1 {
 
         long startTimeV1 = System.nanoTime();
         for (int i = 0; i < 200; i++) {
+            //System.out.println("Version 1 run " + i);
+            Version1 version1Multi = new Version1(16);
+
             for (String command : commands) {
                 String[] parts = command.split(" ");
                 if (parts[0].equals("create")) {
                     int parentPid = Integer.parseInt(parts[1]);
-                    version1.create(parentPid);
+                    version1Multi.create(parentPid);
                 } else if (parts[0].equals("destroy")) {
                     int targetPid = Integer.parseInt(parts[1]);
-                    version1.destroy(targetPid);
+                    version1Multi.destroy(targetPid);
                 }
             }
         }
@@ -122,14 +125,17 @@ public class Program1 {
 
         long startTimeV2 = System.nanoTime();
         for (int i = 0; i < 200; i++) {
+            //System.out.println("Version 2 run " + i);
+            Version2 version2Multi = new Version2(16);
+
             for (String command : commands) {
                 String[] parts = command.split(" ");
                 if (parts[0].equals("create")) {
                     int parentPid = Integer.parseInt(parts[1]);
-                    version2.create(parentPid);
+                    version2Multi.create(parentPid);
                 } else if (parts[0].equals("destroy")) {
                     int targetPid = Integer.parseInt(parts[1]);
-                    version2.destroy(targetPid);
+                    version2Multi.destroy(targetPid);
                 }
             }
         }

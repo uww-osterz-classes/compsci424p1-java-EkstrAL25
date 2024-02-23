@@ -20,4 +20,10 @@ public class Version2PCB {
         this.younger_sibling = -1;
         this.older_sibling = -1;
     }
+
+    @Override
+    public String toString() {
+        return "Parent: " + parent + ", First Child: " + first_child +
+                ", Younger Sibling: " + younger_sibling + ", Older Sibling: " + older_sibling;
+    }
 }
